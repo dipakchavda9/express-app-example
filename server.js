@@ -1,15 +1,17 @@
-let express = require('express');
-let bodyParser = require('body-parser');
-let responseTime = require('response-time');
-let helmet = require('helmet');
-let addRequestId = require('express-request-id')();
-let dotenv = require('dotenv');
+const express = require('express');
+const bodyParser = require('body-parser');
+const responseTime = require('response-time');
+const helmet = require('helmet');
+const addRequestId = require('express-request-id')();
+const dotenv = require('dotenv');
 dotenv.config();
-let { checkSchema } = require('express-validator');
+const { checkSchema } = require('express-validator');
 
-let logger = require('./app/logger');
-let routes = require('./app/routes');
-let schemas = require('./app/schemas');
+const logger = require('./app/logger');
+const routes = require('./app/routes');
+const schemas = require('./app/schemas');
+const middlewares = require('./app/middlewares');
+const db = require('./app/db');
 
 let app = express();
 let PORT = process.env.PORT | 3000;
@@ -31,7 +33,9 @@ app.use(addRequestId);
 
 app.use(logger.logger);
 
-app.get('/heads', checkSchema(schemas.head), routes.getHead);
+app.use(middlewares.db(db));
+
+app.post('/heads', checkSchema(schemas.head), routes.postHead);
 
 app.use(logger.errorLogger);
 
