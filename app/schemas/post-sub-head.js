@@ -1,4 +1,14 @@
 module.exports = {
+  head_id: {
+    in: ['body'],
+    exists: {
+      errorMessage: 'head_id is required.'
+    },
+    isInt: {
+      errorMessage: "head_id must be integer.",
+      options: { min:1, max: 2147483647 }
+    },
+  },
   name: {
     in: ['body'],
     exists: {
@@ -14,23 +24,7 @@ module.exports = {
     },
     isLength: {
       errorMessage: 'Name can be maximum 250 character long.',
-      // Multiple options would be expressed as an array
       options: { max: 250 }
-    }
-  },
-  type: {
-    in: ['body'],
-    exists: {
-      errorMessage: 'Type is required.'
-    },
-    isIn: {
-      errorMessage: "Type can be either 'F' or 'P'",
-      options: [
-        [
-          'F',
-          'P'
-        ]
-      ]
     }
   },
   status: {

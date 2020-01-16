@@ -2,18 +2,23 @@ module.exports = {
   id: {
     in: ['params'],
     isInt: {
-      errorMessage: "'id' must be integer.",
+      errorMessage: "id must be integer.",
       options: { min:1, max: 2147483647 }
     },
     exists: {
-      errorMessage: "'id' is required."
+      errorMessage: "id is required."
     }
   },
   name: {
     in: ['body'],
     optional: true,
-    isAlphanumeric: {
-      errorMessage: 'Name must be Alpha Numeric.'
+    matches: {
+      errorMessage: "Name can't contain special characters.",
+      options: [
+        [
+          '^[a-zA-Z0-9 ]+$'
+        ]
+      ]
     },
     isLength: {
       errorMessage: 'Name can be maximum 250 character long.',

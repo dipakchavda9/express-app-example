@@ -1,9 +1,25 @@
 module.exports = {
+  id: {
+    in: ['params'],
+    isInt: {
+      errorMessage: "id must be integer.",
+      options: { min:1, max: 2147483647 }
+    },
+    exists: {
+      errorMessage: "id is required."
+    }
+  },
+  head_id: {
+    in: ['body'],
+    optional: true,
+    isInt: {
+      errorMessage: "head_id must be integer.",
+      options: { min:1, max: 2147483647 }
+    },
+  },
   name: {
     in: ['body'],
-    exists: {
-      errorMessage: 'Name is required.'
-    },
+    optional: true,
     matches: {
       errorMessage: "Name can't contain special characters.",
       options: [
@@ -14,23 +30,7 @@ module.exports = {
     },
     isLength: {
       errorMessage: 'Name can be maximum 250 character long.',
-      // Multiple options would be expressed as an array
       options: { max: 250 }
-    }
-  },
-  type: {
-    in: ['body'],
-    exists: {
-      errorMessage: 'Type is required.'
-    },
-    isIn: {
-      errorMessage: "Type can be either 'F' or 'P'",
-      options: [
-        [
-          'F',
-          'P'
-        ]
-      ]
     }
   },
   status: {
