@@ -43,7 +43,29 @@ const updateHead = async (db, id, data) => {
     }
 };
 
+const getAllHeads = async (db) => {
+    try {
+        return await db('head_master').withSchema('Account').select('*');
+    } catch (e) {
+        throw e;
+    }
+};
+
+const getHeadById = async (db, id) => {
+    try {
+        let result = await db('head_master').withSchema('Account').select('*').where({ 'id': id });
+        if (result.length === 0) {
+            return false;
+        }
+        return result[0];
+    } catch (e) {
+        throw e;
+    }
+};
+
 module.exports = {
     insertHead,
-    updateHead
+    updateHead,
+    getAllHeads,
+    getHeadById
 };

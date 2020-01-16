@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
         let insertedHead = await headModel.insertHead(req.db, req.body);
         return util.sendResponse(req, res, insertedHead);
     } catch (e) {
-        return util.sendErrorResponse(req, res, 422, 'INSERT_ERROR', e);
+        return util.sendErrorResponse(req, res, 422, 'DB_ERROR', e);
     }
 
 };
