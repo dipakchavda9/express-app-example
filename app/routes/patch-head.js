@@ -10,10 +10,10 @@ module.exports = async (req, res) => {
     }
 
     try {
-        let insertedHead = await headModel.insertHead(req.db, req.body);
-        return util.sendResponse(req, res, insertedHead);
+        let updatedHead = await headModel.updateHead(req.db, req.params.id, req.body);
+        return util.sendResponse(req, res, updatedHead);
     } catch (e) {
-        return util.sendErrorResponse(req, res, 422, 'INSERT_ERROR', e);
+        return util.sendErrorResponse(req, res, 422, 'UPDATE_ERROR', e);
     }
 
 };

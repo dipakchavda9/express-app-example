@@ -1,9 +1,17 @@
 module.exports = {
+  id: {
+    in: ['params'],
+    isInt: {
+      errorMessage: "'id' must be integer.",
+      options: { min:1, max: 2147483647 }
+    },
+    exists: {
+      errorMessage: "'id' is required."
+    }
+  },
   name: {
     in: ['body'],
-    exists: {
-      errorMessage: 'Name is required.'
-    },
+    optional: true,
     isAlphanumeric: {
       errorMessage: 'Name must be Alpha Numeric.'
     },
@@ -15,14 +23,14 @@ module.exports = {
   },
   type: {
     in: ['body'],
-    exists: {
-      errorMessage: 'Type is required.'
-    },
+    optional: true,
     isIn: {
       errorMessage: "Type can be either 'F' or 'P'",
       options: [
-        'F',
-        'P'
+        [
+          'F',
+          'P'
+        ]
       ]
     }
   },

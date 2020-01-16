@@ -35,7 +35,8 @@ app.use(logger.logger);
 
 app.use(middlewares.db(db));
 
-app.post('/heads', checkSchema(schemas.head), routes.postHead);
+app.post('/heads', checkSchema(schemas.postHead), routes.postHead);
+app.patch('/heads/:id', checkSchema(schemas.patchHead), routes.patchHead);
 
 app.use(logger.errorLogger);
 

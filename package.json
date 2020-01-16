@@ -17,6 +17,7 @@
     "express-winston": "^4.0.2",
     "helmet": "^3.21.2",
     "knex": "^0.20.4",
+    "lodash": "^4.17.15",
     "pg": "^7.16.0",
     "response-time": "^2.3.2",
     "winston": "^3.2.1"
