@@ -63,9 +63,20 @@ const getHeadById = async (db, id) => {
     }
 };
 
+const deleteHeadById = async (db, id) => {
+    try {
+        let result = await db('head_master').withSchema('Account').del().where({ 'id': id }).returning('*');
+        console.log(result);
+        return result[0];
+    } catch (e) {
+        throw e;
+    }
+};
+
 module.exports = {
     insertHead,
     updateHead,
     getAllHeads,
-    getHeadById
+    getHeadById,
+    deleteHeadById
 };
