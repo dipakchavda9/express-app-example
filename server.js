@@ -55,8 +55,10 @@ app.delete('/transactions/:id', checkSchema(schemas.getDeleteTransaction), route
 
 app.use(logger.errorLogger);
 
-app.listen(PORT, () => {
-    console.log('Server started on Port: ', PORT);
-});
+if (require.main.filename === __filename) {
+    app.listen(PORT, () => {
+        console.log('Server started on Port: ', PORT);
+    });
+}
 
 module.exports = app;
