@@ -6,6 +6,7 @@ const addRequestId = require('express-request-id')();
 const dotenv = require('dotenv');
 dotenv.config();
 const { checkSchema } = require('express-validator');
+const cors = require('cors')
 
 const logger = require('./app/logger');
 const routes = require('./app/routes');
@@ -18,16 +19,18 @@ let PORT = process.env.PORT | 3000;
 
 app.use(bodyParser.json());
 
+app.use(cors());
+
 app.use(responseTime());
 
-app.use(helmet());
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
-    }
-}));
-app.use(helmet.noCache());
+// app.use(helmet());
+// app.use(helmet.contentSecurityPolicy({
+//     directives: {
+//         defaultSrc: ["'self'"],A
+//         styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
+//     }
+// }));
+// app.use(helmet.noCache());
 
 app.use(addRequestId);
 

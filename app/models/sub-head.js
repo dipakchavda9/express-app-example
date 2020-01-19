@@ -45,7 +45,18 @@ const updateSubHead = async (db, id, data) => {
 
 const getAllSubHeads = async (db) => {
     try {
-        return await db('sub_head_master').withSchema('Account').select('*');
+        return await db('sub_head_master')
+            .withSchema('Account')
+            .select(
+                'sub_head_master.id',
+                'sub_head_master.head_id',
+                'sub_head_master.name',
+                'sub_head_master.status',
+                'sub_head_master.date_created',
+                'sub_head_master.date_modified',
+                'head_master.name AS head_name'
+            )
+            .innerJoin('head_master', 'sub_head_master.head_id', 'head_master.id');
     } catch (e) {
         throw e;
     }
