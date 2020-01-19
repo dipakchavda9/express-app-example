@@ -64,7 +64,19 @@ const getAllSubHeads = async (db) => {
 
 const getSubHeadById = async (db, id) => {
     try {
-        let result = await db('sub_head_master').withSchema('Account').select('*').where({ 'id': id });
+        let result = await db('sub_head_master')
+        .withSchema('Account')
+        .select(
+            'sub_head_master.id',
+            'sub_head_master.head_id',
+            'sub_head_master.name',
+            'sub_head_master.status',
+            'sub_head_master.date_created',
+            'sub_head_master.date_modified',
+            'head_master.name AS head_name'
+        )
+        .innerJoin('head_master', 'sub_head_master.head_id', 'head_master.id')
+        .where({ 'sub_head_master.id': id });
         if (result.length === 0) {
             return false;
         }
