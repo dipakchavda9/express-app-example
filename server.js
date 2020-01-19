@@ -47,6 +47,12 @@ app.post('/sub-heads', checkSchema(schemas.postSubHead), routes.postSubHead);
 app.patch('/sub-heads/:id', checkSchema(schemas.patchSubHead), routes.patchSubHead);
 app.delete('/sub-heads/:id', checkSchema(schemas.getDeleteSubHead), routes.deleteSubHead);
 
+app.get('/transactions', routes.getTransaction.getAllTransactions);
+app.get('/transactions/:id', checkSchema(schemas.getDeleteTransaction), routes.getTransaction.getTransactionById);
+app.post('/transactions', checkSchema(schemas.postTransaction), routes.postTransaction);
+app.patch('/transactions/:id', checkSchema(schemas.patchTransaction), routes.patchTransaction);
+app.delete('/transactions/:id', checkSchema(schemas.getDeleteTransaction), routes.deleteTransaction);
+
 app.use(logger.errorLogger);
 
 app.listen(PORT, () => {
