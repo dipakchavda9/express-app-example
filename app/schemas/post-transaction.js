@@ -15,16 +15,6 @@ module.exports = {
       options: { max: 1000 }
     }
   },
-  sub_head_id: {
-    in: ['body'],
-    exists: {
-      errorMessage: "sub_head_id is required."
-    },
-    isInt: {
-      errorMessage: "sub_head_id must be integer.",
-      options: { min:1, max: 2147483647 }
-    }
-  },
   trn_type: {
     in: ['body'],
     exists: {
@@ -40,13 +30,37 @@ module.exports = {
       ]
     }
   },
-  amount: {
+  transactions: {
     in: ['body'],
     exists: {
-      errorMessage: "amount is required."
+      errorMessage: "transactions is required."
     },
-    isNumeric: {
-      errorMessage: "Invalid amount."
+    custom: {
+      options: (value, { req, location, path }) => {
+        if (!Array.isArray(value)) {
+          return Promise.reject('transactions must be array.');
+        }
+        var i = 0;
+        while (i < value.length) {
+          if (!value[i].sub_head_id || !value[i].amount) {
+            return Promise.reject('One or more transactions are invalid.');
+          }
+          if (!Number.isInteger(+value[i].sub_head_id)) {
+            return Promise.reject('One or more transactions are invalid.');
+          }
+          if (+value[i].sub_head_id <= 0) {
+            return Promise.reject('One or more transactions are invalid.');
+          }
+          if (isNaN(value[i].amount)) {
+            return Promise.reject('One or more transactions are invalid.');
+          }
+          if (+value[i].amount <= 0) {
+            return Promise.reject('One or more transactions are invalid.');
+          }
+          i++;
+        }
+        return true;
+      }
     }
   },
   financial_year: {
@@ -61,14 +75,6 @@ module.exports = {
       ]
     }
   },
-  // receipt_id: {
-  //   in: ['body'],
-  //   optional: true,
-  //   isInt: {
-  //     errorMessage: "receipt_id must be integer.",
-  //     options: { min:1, max: 9223372036854775807 }
-  //   }
-  // },
   trn_date: {
     in: ['body'],
     optional: true,

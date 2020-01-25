@@ -25,6 +25,21 @@ module.exports = {
       ]
     }
   },
+  transaction_type: {
+    in: ['body'],
+    exists: {
+      errorMessage: 'transaction_type is required.'
+    },
+    isIn: {
+      errorMessage: "transaction_type can be either 'C' or 'D'",
+      options: [
+        [
+          'C',
+          'D'
+        ]
+      ]
+    }
+  },
   status: {
     in: ['body'],
     optional: true,

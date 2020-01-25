@@ -31,6 +31,19 @@ module.exports = {
       ]
     }
   },
+  transaction_type: {
+    in: ['body'],
+    optional: true,
+    isIn: {
+      errorMessage: "transaction_type can be either 'C' or 'D'",
+      options: [
+        [
+          'C',
+          'D'
+        ]
+      ]
+    }
+  },
   status: {
     in: ['body'],
     optional: true,

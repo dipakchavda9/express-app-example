@@ -5,6 +5,7 @@ const insertHead = async (db, data) => {
         let result = await db('head_master').withSchema('Account').insert({
             "name": data.name,
             "type": data.type,
+            "transaction_type": data.transaction_type,
             "status": (data.status ? data.status : true)
         }).returning('*');
         return result[0];
@@ -21,6 +22,9 @@ const updateHead = async (db, id, data) => {
         }
         if (data.hasOwnProperty('type')) {
             dataToUpdate.type = data.type;
+        }
+        if (data.hasOwnProperty('transaction_type')) {
+            dataToUpdate.transaction_type = data.transaction_type;
         }
         if (data.hasOwnProperty('status')) {
             dataToUpdate.status = data.status;

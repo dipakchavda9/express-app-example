@@ -23,14 +23,14 @@ app.use(cors());
 
 app.use(responseTime());
 
-// app.use(helmet());
-// app.use(helmet.contentSecurityPolicy({
-//     directives: {
-//         defaultSrc: ["'self'"],A
-//         styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
-//     }
-// }));
-// app.use(helmet.noCache());
+app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", 'maxcdn.bootstrapcdn.com']
+    }
+}));
+app.use(helmet.noCache());
 
 app.use(addRequestId);
 
@@ -55,6 +55,8 @@ app.get('/transactions/:id', checkSchema(schemas.getDeleteTransaction), routes.g
 app.post('/transactions', checkSchema(schemas.postTransaction), routes.postTransaction);
 app.patch('/transactions/:id', checkSchema(schemas.patchTransaction), routes.patchTransaction);
 app.delete('/transactions/:id', checkSchema(schemas.getDeleteTransaction), routes.deleteTransaction);
+
+app.post('/fixed-asset-transactions', checkSchema(schemas.postTransaction), routes.postTransaction);
 
 app.use(logger.errorLogger);
 

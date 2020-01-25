@@ -1,21 +1,29 @@
 const _ = require('lodash');
 
-const insertTransaction = async (db, data) => {
+const insertTransactions = async (db, data) => {
     try {
-        let result = await db('transactions').withSchema('Account').insert({
+        var i = 0;
+        let trnData = {
             "haribhakt_id": data.haribhakt_id,
             "description": data.description ? data.description : null,
-            "sub_head_id": data.sub_head_id,
             "trn_type": data.trn_type,
-            "amount": data.amount,
             "financial_year": data.financial_year,
-            "receipt_id": data.receipt_id,
+            "receipt_id": data.receipt_id ? data.receipt_id : null,
             "trn_date": data.trn_date ? data.trn_date : null,
             "voucher_id": data.voucher_id ? data.voucher_id : null,
             "bill_no": data.bill_no ? data.bill_no : null,
             "user_id": data.user_id
-        }).returning('*');
-        return result[0];
+        };
+        let insertedTrns = [];
+        let result;
+        while (i < data.transactions.length) {
+            trnData.sub_head_id = data.transactions[i].sub_head_id;
+            trnData.amount = data.transactions[i].amount;
+            result = await db('transactions').withSchema('Account').insert(trnData).returning('*');
+            insertedTrns.push(result[0]);
+            i++;
+        }
+        return insertedTrns;
     } catch (e) {
         throw e;
     }
@@ -98,9 +106,24 @@ const deleteTransactionById = async (db, id) => {
     }
 };
 
-const getMaxReceiptNo = async (db) => {
+const getMaxReceiptNo = async (db, financialYear) => {
     try {
-        let result = await db('transactions').withSchema('Account').max('receipt_id');
+        let result = await db('transactions')
+            .withSchema('Account')
+            .where({ 'financial_year': financialYear })
+            .max('receipt_id');
+        return result[0].max;
+    } catch (e) {
+        throw e;
+    }
+};
+
+const getMaxVoucherNo = async (db, financialYear) => {
+    try {
+        let result = await db('transactions')
+            .withSchema('Account')
+            .where({ 'financial_year': financialYear })
+            .max('voucher_id');
         return result[0].max;
     } catch (e) {
         throw e;
@@ -108,10 +131,11 @@ const getMaxReceiptNo = async (db) => {
 };
 
 module.exports = {
-    insertTransaction,
+    insertTransactions,
     updateTransaction,
     getAllTransactions,
     getTransactionById,
     deleteTransactionById,
-    getMaxReceiptNo
+    getMaxReceiptNo,
+    getMaxVoucherNo
 };
