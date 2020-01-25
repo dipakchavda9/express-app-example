@@ -9,12 +9,50 @@ module.exports = {
       options: { min:1, max: 2147483647 }
     }
   },
-  last_year_balance: {
+  financial_year: {
     in: ['body'],
     optional: true,
-    isDecimal: {
-      errorMessage: "last_year_balance must be valid amount.",
+    matches: {
+      errorMessage: "Invalid financial_year.",
+      options: [
+        [
+          "^\\d{4}\\-\\d{4}$"
+        ]
+      ]
+    }
+  },
+  user_id: {
+    in: ['body'],
+    exists: {
+      errorMessage: "user_id is required."
+    },
+    isInt: {
+      errorMessage: "user_id must be integer.",
       options: { min:1, max: 2147483647 }
     }
   },
+  trn_type: {
+    in: ['body'],
+    exists: {
+      errorMessage: "trn_type is required."
+    },
+    isIn: {
+      errorMessage: "trn_type can be either 'C' or 'D'",
+      options: [
+        [
+          'C',
+          'D'
+        ]
+      ]
+    }
+  },
+  amount: {
+    in: ['body'],
+    exists: {
+      errorMessage: "amount is required."
+    },
+    isNumeric: {
+      errorMessage: "Invalid amount."
+    }
+  }
 };

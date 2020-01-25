@@ -56,7 +56,8 @@ app.post('/transactions', checkSchema(schemas.postTransaction), routes.postTrans
 app.patch('/transactions/:id', checkSchema(schemas.patchTransaction), routes.patchTransaction);
 app.delete('/transactions/:id', checkSchema(schemas.getDeleteTransaction), routes.deleteTransaction);
 
-app.post('/fixed-asset-transactions', checkSchema(schemas.postTransaction), routes.postTransaction);
+app.get('/fixed-asset-transactions', routes.getFixedAssetTransaction);
+app.post('/fixed-asset-transactions', checkSchema(schemas.postFixedAssetTransaction), routes.postFixedAssetTransaction);
 
 app.use(logger.errorLogger);
 
