@@ -54,7 +54,8 @@ const getAllSubHeads = async (db) => {
                 'sub_head_master.status',
                 'sub_head_master.date_created',
                 'sub_head_master.date_modified',
-                'head_master.name AS head_name'
+                'head_master.name AS head_name',
+                'head_master.transaction_type AS head_transaction_type'
             )
             .innerJoin('head_master', 'sub_head_master.head_id', 'head_master.id');
     } catch (e) {
@@ -73,8 +74,9 @@ const getSubHeadById = async (db, id) => {
             'sub_head_master.status',
             'sub_head_master.date_created',
             'sub_head_master.date_modified',
-            'head_master.name AS head_name'
-        )
+            'head_master.name AS head_name',
+            'head_master.transaction_type AS head_transaction_type'
+            )
         .innerJoin('head_master', 'sub_head_master.head_id', 'head_master.id')
         .where({ 'sub_head_master.id': id });
         if (result.length === 0) {
