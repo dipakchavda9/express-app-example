@@ -66,6 +66,7 @@ app.get('/bloodgroups', routes.getBloodgroup);
 
 app.get('/haribhakts', checkSchema(schemas.getHaribhakt), routes.getHaribhakt);
 app.post('/haribhakts', checkSchema(schemas.postHaribhakt), routes.postHaribhakt);
+app.patch('/haribhakts/:id', checkSchema(schemas.patchHaribhakt), routes.patchHaribhakt);
 
 app.use(logger.errorLogger);
 
