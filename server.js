@@ -59,6 +59,14 @@ app.delete('/transactions/:id', checkSchema(schemas.getDeleteTransaction), route
 app.get('/fixed-asset-transactions', routes.getFixedAssetTransaction);
 app.post('/fixed-asset-transactions', checkSchema(schemas.postFixedAssetTransaction), routes.postFixedAssetTransaction);
 
+app.get('/villages', routes.getVillages);
+app.get('/professions', routes.getProfession);
+app.get('/satsangrefs', routes.getSatsangref);
+app.get('/bloodgroups', routes.getBloodgroup);
+
+app.get('/haribhakts', checkSchema(schemas.getDeleteHaribhakt), routes.getHaribhakt);
+// app.post('/haribhakts', checkSchema(schemas.postHaribhakt), routes.postHaribhakt);
+
 app.use(logger.errorLogger);
 
 if (require.main.filename === __filename) {
