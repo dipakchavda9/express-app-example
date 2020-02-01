@@ -60,8 +60,14 @@ app.get('/fixed-asset-transactions', routes.getFixedAssetTransaction);
 app.post('/fixed-asset-transactions', checkSchema(schemas.postFixedAssetTransaction), routes.postFixedAssetTransaction);
 
 app.get('/villages', routes.getVillages);
+app.post('/villages', checkSchema(schemas.postVillage), routes.postVillage);
+
 app.get('/professions', routes.getProfession);
+app.post('/professions', checkSchema(schemas.postProfession), routes.postProfession);
+
 app.get('/satsangrefs', routes.getSatsangref);
+app.post('/satsangrefs', checkSchema(schemas.postSatsangref), routes.postSatsangref);
+
 app.get('/bloodgroups', routes.getBloodgroup);
 
 app.get('/haribhakts', checkSchema(schemas.getHaribhakt), routes.getHaribhakt);
