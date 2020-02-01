@@ -100,8 +100,29 @@ const getHaribhaktByVillage = async (db, village) => {
     return data;
 };
 
+const insertHaribhakt = async (db, data) => {
+    let dataToInsert = {
+        firstname: data.firstname ? data.firstname : null,
+        lastname: data.lastname ? data.lastname : null,
+        address_current: data.address_current ? data.address_current : null,
+        address_native: data.address_native ? data.address_native : null,
+        village_current: data.village_current ? data.village_current : null,
+        village_native: data.village_native ? data.village_native : null,
+        mobile1: data.mobile1 ? data.mobile1 : null,
+        mobile2: data.mobile2 ? data.mobile2 : null,
+        email: data.email ? data.email : null,
+        blood_group: data.blood_group ? data.blood_group : null,
+        profession: data.profession ? data.profession : null,
+        satsang_ref: data.satsang_ref ? data.satsang_ref : null,
+        no_members: data.no_members ? data.no_members : null
+    };
+    let insertedHaribhakt = await db('haribhakt').withSchema('Account').insert(dataToInsert).returning('*');
+    return insertedHaribhakt;
+};
+
 module.exports = {
     getHaribhaktByMobile,
     getHaribhaktByVillage,
-    getAllHaribhakts
+    getAllHaribhakts,
+    insertHaribhakt
 };

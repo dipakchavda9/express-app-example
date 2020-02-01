@@ -35,4 +35,75 @@ module.exports = {
       options: { max: 1000 }
     }
   },
+  village_current: {
+    in: ['body'],
+    optional: true,
+    isInt: {
+      errorMessage: "village_current must be integer.",
+      options: { min:1, max: 2147483647 }
+    }
+  },
+  village_native: {
+    in: ['body'],
+    exists: {
+      errorMessage: "village_native is required."
+    },
+    isInt: {
+      errorMessage: "village_native must be integer.",
+      options: { min:1, max: 2147483647 }
+    }
+  },
+  mobile1: {
+    in: ['body'],
+    isMobilePhone: {
+      errorMessage: "Invalid mobile number."
+    },
+    optional: true
+  },
+  mobile2: {
+    in: ['body'],
+    isMobilePhone: {
+      errorMessage: "Invalid mobile number."
+    },
+    optional: true
+  },
+  email: {
+    in: ['body'],
+    isEmail: {
+      errorMessage: "Invalid email."
+    },
+    optional: true
+  },
+  blood_group: {
+    in: ['body'],
+    optional: true,
+    isInt: {
+      errorMessage: "blood_group must be integer.",
+      options: { min:1, max: 2147483647 }
+    }
+  },
+  profession: {
+    in: ['body'],
+    optional: true,
+    isInt: {
+      errorMessage: "profession must be integer.",
+      options: { min:1, max: 2147483647 }
+    }
+  },
+  satsang_ref: {
+    in: ['body'],
+    optional: true,
+    isInt: {
+      errorMessage: "satsang_ref must be integer.",
+      options: { min:1, max: 2147483647 }
+    }
+  },
+  no_members: {
+    in: ['body'],
+    optional: true,
+    isInt: {
+      errorMessage: "no_members must be integer.",
+      options: { min:1, max: 2147483647 }
+    }
+  }
 };
