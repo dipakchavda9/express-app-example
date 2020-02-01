@@ -64,7 +64,7 @@ app.get('/professions', routes.getProfession);
 app.get('/satsangrefs', routes.getSatsangref);
 app.get('/bloodgroups', routes.getBloodgroup);
 
-app.get('/haribhakts', checkSchema(schemas.getDeleteHaribhakt), routes.getHaribhakt);
+app.get('/haribhakts', checkSchema(schemas.getHaribhakt), routes.getHaribhakt);
 // app.post('/haribhakts', checkSchema(schemas.postHaribhakt), routes.postHaribhakt);
 
 app.use(logger.errorLogger);

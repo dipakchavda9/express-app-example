@@ -10,7 +10,14 @@ let getHaribhakt = async (req, res) => {
     }
 
     try {
-        let data = await haribhaktModel.getHaribhaktByMobile(req.db, req.query.mobile);
+        let data;
+        if (req.query.mobile) {
+            data = await haribhaktModel.getHaribhaktByMobile(req.db, req.query.mobile);
+        } else if (req.query.village) {
+            data = await haribhaktModel.getHaribhaktByVillage(req.db, req.query.village);
+        } else {
+            data = await haribhaktModel.getAllHaribhakts(req.db);
+        }
         return util.sendResponse(req, res, data);
     } catch (e) {
         return util.sendErrorResponse(req, res, 422, 'DB_ERROR', e);
