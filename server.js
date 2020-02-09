@@ -74,6 +74,8 @@ app.get('/haribhakts', checkSchema(schemas.getHaribhakt), routes.getHaribhakt);
 app.post('/haribhakts', checkSchema(schemas.postHaribhakt), routes.postHaribhakt);
 app.patch('/haribhakts/:id', checkSchema(schemas.patchHaribhakt), routes.patchHaribhakt);
 
+app.post('/login', checkSchema(schemas.postLogin), routes.postLogin);
+
 app.use(logger.errorLogger);
 
 if (require.main.filename === __filename) {
