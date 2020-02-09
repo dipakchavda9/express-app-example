@@ -13,8 +13,11 @@ module.exports = async (req, res) => {
     try {
 
         if (!req.body.financial_year) {
-            var currentYear = +moment().format('YYYY');
-            req.body.financial_year = currentYear + '-' + (currentYear + 1);
+            if (req.body.trn_date) {
+                req.body.financial_year = util.getFinancialYear(req.body.trn_date);
+            } else {
+                req.body.financial_year = util.getFinancialYear();
+            }
         }
 
         if (req.body.trn_type.toUpperCase() === 'C') {

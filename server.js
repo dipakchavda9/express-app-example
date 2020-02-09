@@ -76,6 +76,8 @@ app.patch('/haribhakts/:id', checkSchema(schemas.patchHaribhakt), routes.patchHa
 
 app.post('/login', checkSchema(schemas.postLogin), routes.postLogin);
 
+app.get('/reports/dashboard', routes.getReportDashboard);
+
 app.use(logger.errorLogger);
 
 if (require.main.filename === __filename) {
