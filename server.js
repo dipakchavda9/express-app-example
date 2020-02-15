@@ -78,6 +78,8 @@ app.post('/login', checkSchema(schemas.postLogin), routes.postLogin);
 
 app.get('/reports/dashboard', routes.getReportDashboard);
 
+app.get('/reports/credit-transactions', checkSchema(schemas.getCreditTrns), routes.getCreditTrns);
+
 app.use(logger.errorLogger);
 
 if (require.main.filename === __filename) {
