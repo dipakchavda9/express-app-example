@@ -1,4 +1,5 @@
 const util = require('../util');
+const moment = require('moment');
 
 const getDashboardData = async (db) => {
     var currentFY = util.getFinancialYear();
@@ -86,7 +87,7 @@ const getCreditTrnsByDateRange = async (db, startDate, endDate) => {
             trn.financial_year,
             trn.receipt_id,
             trn.user_id,
-            trn.trn_date,
+            trn_date,
             hr.firstname,
             hr.lastname,
             hr.village_current,
@@ -125,23 +126,71 @@ const getCreditTrnsByDateRange = async (db, startDate, endDate) => {
         WHERE
             trn_date
         BETWEEN
-            '${startDate}' and '${endDate}'
+            '${startDate}' AND '${endDate}'
         AND
-            trn_type = 'C';
+            trn_type = 'C'
+        AND
+            receipt_id is not null
+        ORDER BY
+            trn_date;
     `);
     
     if (!transactions) {
         return false;
     }
 
-    let formattedTrns = {};
-    for (var i = 0; i < transactions.rows.length; i++) {
-        if (!formattedTrns[transactions.rows[i].receipt_id]) {
-            formattedTrns[transactions.rows[i].receipt_id] = [];
+    transactions = transactions.rows;
+
+    let dateWiseTrns = {};
+    for (var i =0; i < transactions.length; i++) {
+        var trnDate = moment(transactions[i].trn_date, moment.ISO_8601).format('DD-MM-YYYY');
+        if (!dateWiseTrns[trnDate]) {
+            dateWiseTrns[trnDate] = [];
         }
-        formattedTrns[transactions.rows[i].receipt_id].push(transactions.rows[i]);
+        dateWiseTrns[trnDate].push(transactions[i]);
     }
 
+    let dateReceiptWiseTrns = {};
+    for (var trnDate in dateWiseTrns) {
+        var transactionsByDate = dateWiseTrns[trnDate];
+        var trnByReceipt = {};
+        for (var j =0; j < transactionsByDate.length; j++) {
+            if (!trnByReceipt[transactionsByDate[j].receipt_id]) {
+                trnByReceipt[transactionsByDate[j].receipt_id] = [];
+            }
+            trnByReceipt[transactionsByDate[j].receipt_id].push(transactionsByDate[j]);
+        }
+        dateReceiptWiseTrns[trnDate] = trnByReceipt;
+    }
+
+    let formattedTrns = [];
+    for (var trnDate in dateReceiptWiseTrns) {
+        let dateWiseTrns = dateReceiptWiseTrns[trnDate];
+        let mouldedReceiptWiseTrns = [];
+        for (var receiptId in dateWiseTrns) {
+            let receiptWiseTrns = dateWiseTrns[receiptId];
+            let mappedReceiptWiseTrns = receiptWiseTrns.map((trn) => {
+                return {
+                    'sub_head_name': trn.sub_head_name,
+                    'head_name': trn.head_name,
+                    'amount': trn.amount
+                }
+            });
+            let mouldedReceiptWiseTrn = {
+                'firstname': receiptWiseTrns[0].firstname,
+                'lastname': receiptWiseTrns[0].lastname,
+                'receipt_id': receiptWiseTrns[0].receipt_id,
+                'village_current_name': receiptWiseTrns[0].village_current_name,
+                'transactions': mappedReceiptWiseTrns
+            };
+            mouldedReceiptWiseTrns.push(mouldedReceiptWiseTrn);
+        }
+        let formattedDateWiseTrns = {
+            'date': trnDate,
+            'data': mouldedReceiptWiseTrns
+        };
+        formattedTrns.push(formattedDateWiseTrns);
+    }
     return formattedTrns;
 }
 

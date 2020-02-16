@@ -15,6 +15,7 @@ module.exports = async (req, res) => {
 
         return util.sendResponse(req, res, data);
     } catch (e) {
+        console.log(e);
         return util.sendErrorResponse(req, res, 422, 'DB_ERROR', e);
     }
 
