@@ -194,7 +194,59 @@ const getCreditTrnsByDateRange = async (db, startDate, endDate) => {
     return formattedTrns;
 }
 
+const getRojmelData = async (db, date) => {
+    let transactions = await db.raw(`
+        SELECT 'C'      AS trn_type, 
+            shm.name AS sub_head_name, 
+            ''       AS description, 
+            Sum (t.amount) 
+        FROM   "Account".transactions t 
+            INNER JOIN "Account".sub_head_master shm 
+                    ON t.sub_head_id = shm.id 
+        WHERE  t.haribhakt_id IS NOT NULL 
+            AND t.trn_type = 'C'
+            AND t.trn_date::date = '${date}'
+        GROUP  BY sub_head_name 
+        UNION 
+        SELECT 'C'      AS trn_type, 
+            shm.name AS sub_head_name, 
+            t.description, 
+            t.amount 
+        FROM   "Account".transactions t 
+            INNER JOIN "Account".sub_head_master shm 
+                    ON t.sub_head_id = shm.id 
+        WHERE  t.haribhakt_id IS NULL 
+            AND t.trn_type = 'C'
+            AND t.trn_date::date = '${date}'
+        UNION 
+        SELECT 'D'      AS trn_type, 
+            shm.name AS sub_head_name, 
+            t.description, 
+            t.amount 
+        FROM   "Account".transactions t 
+            INNER JOIN "Account".sub_head_master shm 
+                    ON t.sub_head_id = shm.id 
+        WHERE  t.trn_type = 'D'
+            AND t.trn_date::date = '${date}'
+    `);
+
+    let data = transactions.rows;
+    let formattedData = {};
+
+    formattedData.income = data.filter(trn => trn.trn_type === 'C').map((trn) => {
+        delete trn.trn_type;
+        return trn;
+    });
+    formattedData.expense = data.filter(trn => trn.trn_type === 'D').map((trn) => {
+        delete trn.trn_type;
+        return trn;
+    });
+
+    return formattedData;
+};
+
 module.exports = {
     getDashboardData,
-    getCreditTrnsByDateRange
+    getCreditTrnsByDateRange,
+    getRojmelData
 };

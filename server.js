@@ -79,6 +79,7 @@ app.post('/login', checkSchema(schemas.postLogin), routes.postLogin);
 app.get('/reports/dashboard', routes.getReportDashboard);
 
 app.get('/reports/credit-transactions', checkSchema(schemas.getCreditTrns), routes.getCreditTrns);
+app.get('/reports/rojmel', checkSchema(schemas.getRojmel), routes.getRojmel);
 
 app.use(logger.errorLogger);
 
