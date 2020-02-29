@@ -103,7 +103,7 @@ const getCreditTrnsByDateRange = async (db, startDate, endDate) => {
             hm.name as head_name
         FROM
             "Account".transactions trn
-        LEFT JOIN
+        INNER JOIN
             "Account".haribhakt hr
         ON
             trn.haribhakt_id = hr.id
