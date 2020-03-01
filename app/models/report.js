@@ -200,7 +200,7 @@ const getRojmelData = async (db, date) => {
             shm.name AS sub_head_name, 
             ''       AS description,
             0 AS voucher_id,
-            Sum (t.amount) 
+            Sum (t.amount) AS amount
         FROM   "Account".transactions t 
             INNER JOIN "Account".sub_head_master shm 
                     ON t.sub_head_id = shm.id 
