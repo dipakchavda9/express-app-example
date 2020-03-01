@@ -198,7 +198,8 @@ const getRojmelData = async (db, date) => {
     let transactions = await db.raw(`
         SELECT 'C'      AS trn_type, 
             shm.name AS sub_head_name, 
-            ''       AS description, 
+            ''       AS description,
+            0 AS voucher_id,
             Sum (t.amount) 
         FROM   "Account".transactions t 
             INNER JOIN "Account".sub_head_master shm 
@@ -210,7 +211,8 @@ const getRojmelData = async (db, date) => {
         UNION 
         SELECT 'C'      AS trn_type, 
             shm.name AS sub_head_name, 
-            t.description, 
+            t.description,
+            0 AS voucher_id,
             t.amount 
         FROM   "Account".transactions t 
             INNER JOIN "Account".sub_head_master shm 
@@ -221,7 +223,8 @@ const getRojmelData = async (db, date) => {
         UNION 
         SELECT 'D'      AS trn_type, 
             shm.name AS sub_head_name, 
-            t.description, 
+            t.description,
+            t.voucher_id,
             t.amount 
         FROM   "Account".transactions t 
             INNER JOIN "Account".sub_head_master shm 
@@ -235,6 +238,7 @@ const getRojmelData = async (db, date) => {
 
     formattedData.income = data.filter(trn => trn.trn_type === 'C').map((trn) => {
         delete trn.trn_type;
+        trn.voucher_id = null;
         return trn;
     });
     formattedData.expense = data.filter(trn => trn.trn_type === 'D').map((trn) => {
