@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 
 const insertTransactions = async (db, data) => {
     try {
@@ -16,13 +17,90 @@ const insertTransactions = async (db, data) => {
         };
         let insertedTrns = [];
         let result;
+        let totalAmount = 0;
         while (i < data.transactions.length) {
             trnData.sub_head_id = data.transactions[i].sub_head_id;
             trnData.amount = data.transactions[i].amount;
             result = await db('transactions').withSchema('Account').insert(trnData).returning('*');
+            totalAmount += +data.transactions[i].amount;
             insertedTrns.push(result[0]);
             i++;
         }
+
+        let trnDateObj = moment(data.trn_date, "YYYY-MM-DD");
+        let trnDate = trnDateObj.format('YYYY-MM-DD');
+        let OCRecord = await db('opening_closing_balance').withSchema('Account').select('*').where({ 'date': trnDate });
+        if (OCRecord && OCRecord.length > 0) {
+            let closingBalance = +OCRecord[0].closing_balance;
+            if (data.trn_type.toUpperCase() === 'C') {
+                closingBalance += totalAmount;
+                await db('opening_closing_balance')
+                    .withSchema('Account')
+                    .update({
+                        closing_balance: closingBalance,
+                        date_modified: db.raw('NOW()')
+                    })
+                    .where('date', trnDate);
+                await db('opening_closing_balance')
+                    .withSchema('Account')
+                    .update({
+                        opening_balance: db.raw('?? + ' + totalAmount, ['opening_balance']),
+                        closing_balance: db.raw('?? + ' + totalAmount, ['closing_balance']),
+                        date_modified: db.raw('NOW()')
+                    })
+                    .where('date', '>', trnDate);
+            } else if (data.trn_type.toUpperCase() === 'D') {
+                closingBalance -= totalAmount;
+                await db('opening_closing_balance')
+                    .withSchema('Account')
+                    .update({
+                        closing_balance: closingBalance,
+                        date_modified: db.raw('NOW()')
+                    })
+                    .where('date', trnDate);
+                await db('opening_closing_balance')
+                    .withSchema('Account')
+                    .update({
+                        opening_balance: db.raw('?? - ' + totalAmount, ['opening_balance']),
+                        closing_balance: db.raw('?? - ' + totalAmount, ['closing_balance']),
+                        date_modified: db.raw('NOW()')
+                    })
+                    .where('date', '>', trnDate);
+            }
+        } else {
+            let latestRecord = await db('opening_closing_balance')
+                .withSchema('Account')
+                .select('*')
+                .where('date', '<', trnDate)
+                .orderBy('date', 'desc')
+                .limit(1);
+            let closingBalance = +latestRecord[0].closing_balance;
+            let latestDate = moment(latestRecord[0].date).add(1, 'days');
+            let trnsToInsert = [];
+            while (latestDate.isBefore(trnDateObj)) {
+                trnsToInsert.push({
+                    date: latestDate.format('YYYY-MM-DD'),
+                    opening_balance: closingBalance,
+                    closing_balance: closingBalance
+                });
+                latestDate = latestDate.add(1, 'days');
+            }
+            if (data.trn_type.toUpperCase() === 'C') {
+                trnsToInsert.push({
+                    date: latestDate.format('YYYY-MM-DD'),
+                    opening_balance: closingBalance,
+                    closing_balance: closingBalance + totalAmount
+                });
+            } else if (data.trn_type.toUpperCase() === 'D') {
+                trnsToInsert.push({
+                    date: latestDate.format('YYYY-MM-DD'),
+                    opening_balance: closingBalance,
+                    closing_balance: closingBalance - totalAmount
+                });
+            }
+            await db('opening_closing_balance').withSchema('Account').insert(trnsToInsert);
+        }
+
         return insertedTrns;
     } catch (e) {
         throw e;

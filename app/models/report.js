@@ -246,6 +246,11 @@ const getRojmelData = async (db, date) => {
         return trn;
     });
 
+    let OCRecord = await db('opening_closing_balance').withSchema('Account').select('*').where({ 'date': date });
+    if (OCRecord && OCRecord.length > 0) {
+        formattedData.closingBalance = OCRecord[0].closing_balance;
+    }
+
     return formattedData;
 };
 
