@@ -75,6 +75,7 @@ app.post('/haribhakts', checkSchema(schemas.postHaribhakt), routes.postHaribhakt
 app.patch('/haribhakts/:id', checkSchema(schemas.patchHaribhakt), routes.patchHaribhakt);
 
 app.post('/login', checkSchema(schemas.postLogin), routes.postLogin);
+app.get('/token', routes.getToken);
 
 app.get('/reports/dashboard', routes.getReportDashboard);
 
