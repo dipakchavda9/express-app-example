@@ -1,49 +1,45 @@
 const expressWinston = require('express-winston');
 const winston = require('winston');
-const CloudWatchTransport = require('winston-aws-cloudwatch')
+const CloudWatchTransport = require('winston-aws-cloudwatch');
 const {createLogger, format} = winston;
 const {combine, timestamp} = format;
 
-const getCWTransport = () => {
-    return new CloudWatchTransport({
-        logGroupName: process.env.LOG_GROUP, // REQUIRED
-        logStreamName: process.env.LOG_STREAM, // REQUIRED
-        createLogGroup: false,
-        createLogStream: false,
-        submissionInterval: 2000,
-        submissionRetryCount: 1,
-        batchSize: 20,
-        awsConfig: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          region: process.env.AWS_REGION
-        }
-      });
-};
+const getCWTransport = new CloudWatchTransport({
+    logGroupName: process.env.LOG_GROUP, // REQUIRED
+    logStreamName: process.env.LOG_STREAM, // REQUIRED
+    createLogGroup: false,
+    createLogStream: false,
+    submissionInterval: 1,
+    submissionRetryCount: 3,
+    batchSize: 1,
+    awsConfig: {
+        accessKeyId: process.env.APP_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.APP_AWS_SECRET_ACCESS_KEY,
+        region: process.env.APP_AWS_REGION
+    }
+});
 
-const getFBCWTransport = () => {
-    return new CloudWatchTransport({
-        logGroupName: process.env.LOG_GROUP, // REQUIRED
-        logStreamName: process.env.LOG_STREAM_FEEDBACKS, // REQUIRED
-        createLogGroup: false,
-        createLogStream: false,
-        submissionInterval: 2000,
-        submissionRetryCount: 1,
-        batchSize: 20,
-        awsConfig: {
-          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          region: process.env.AWS_REGION
-        }
-      });
-};
+const getFBCWTransport = new CloudWatchTransport({
+    logGroupName: process.env.LOG_GROUP, // REQUIRED
+    logStreamName: process.env.LOG_STREAM_FEEDBACKS, // REQUIRED
+    createLogGroup: false,
+    createLogStream: false,
+    submissionInterval: 1,
+    submissionRetryCount: 3,
+    batchSize: 1,
+    awsConfig: {
+        accessKeyId: process.env.APP_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.APP_AWS_SECRET_ACCESS_KEY,
+        region: process.env.APP_AWS_REGION
+    }
+});
 
 const winstonLogger = createLogger({
     transports: [
-        getFBCWTransport()
+        getFBCWTransport
     ],
     exceptionHandlers: [
-        getFBCWTransport()
+        new winston.transports.Console()
     ],
     exitOnError: false,
     format: combine(
@@ -54,8 +50,8 @@ const winstonLogger = createLogger({
 
 const logger = expressWinston.logger({
     transports: [
-        // new winston.transports.Console()
-        getCWTransport()
+        new winston.transports.Console(),
+        getCWTransport
     ],
     format: winston.format.combine(
         winston.format.colorize(),
@@ -70,8 +66,8 @@ const logger = expressWinston.logger({
 
 const errorLogger = expressWinston.errorLogger({
     transports: [
-        // new winston.transports.Console()
-        getCWTransport()
+        new winston.transports.Console(),
+        getCWTransport
     ],
     format: winston.format.combine(
         winston.format.colorize(),
@@ -85,10 +81,14 @@ const errorLogger = expressWinston.errorLogger({
 });
 
 const feedbackLogger = (message) => {
-    winstonLogger.log({
-        level: 'info',
-        message: JSON.stringify(message)
-    });
+    try {
+        winstonLogger.log({
+            level: 'info',
+            message: JSON.stringify(message)
+        });
+    } catch (e) {
+        console.log('Feedback Logger Error', e);
+    }
 };
 
 module.exports = {
