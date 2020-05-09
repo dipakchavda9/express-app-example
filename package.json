@@ -25,6 +25,7 @@
     "pg": "^7.16.0",
     "querystring": "^0.2.0",
     "response-time": "^2.3.2",
-    "winston": "^3.2.1"
+    "winston": "^3.2.1",
+    "winston-aws-cloudwatch": "^3.0.0"
   }
 }

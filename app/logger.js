@@ -1,9 +1,61 @@
 const expressWinston = require('express-winston');
 const winston = require('winston');
+const CloudWatchTransport = require('winston-aws-cloudwatch')
+const {createLogger, format} = winston;
+const {combine, timestamp} = format;
+
+const getCWTransport = () => {
+    return new CloudWatchTransport({
+        logGroupName: process.env.LOG_GROUP, // REQUIRED
+        logStreamName: process.env.LOG_STREAM, // REQUIRED
+        createLogGroup: false,
+        createLogStream: false,
+        submissionInterval: 2000,
+        submissionRetryCount: 1,
+        batchSize: 20,
+        awsConfig: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          region: process.env.AWS_REGION
+        }
+      });
+};
+
+const getFBCWTransport = () => {
+    return new CloudWatchTransport({
+        logGroupName: process.env.LOG_GROUP, // REQUIRED
+        logStreamName: process.env.LOG_STREAM_FEEDBACKS, // REQUIRED
+        createLogGroup: false,
+        createLogStream: false,
+        submissionInterval: 2000,
+        submissionRetryCount: 1,
+        batchSize: 20,
+        awsConfig: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+          region: process.env.AWS_REGION
+        }
+      });
+};
+
+const winstonLogger = createLogger({
+    transports: [
+        getFBCWTransport()
+    ],
+    exceptionHandlers: [
+        getFBCWTransport()
+    ],
+    exitOnError: false,
+    format: combine(
+        timestamp(),
+        format.json()
+    )
+});
 
 const logger = expressWinston.logger({
     transports: [
-        new winston.transports.Console()
+        // new winston.transports.Console()
+        getCWTransport()
     ],
     format: winston.format.combine(
         winston.format.colorize(),
@@ -18,7 +70,8 @@ const logger = expressWinston.logger({
 
 const errorLogger = expressWinston.errorLogger({
     transports: [
-        new winston.transports.Console()
+        // new winston.transports.Console()
+        getCWTransport()
     ],
     format: winston.format.combine(
         winston.format.colorize(),
@@ -31,7 +84,15 @@ const errorLogger = expressWinston.errorLogger({
     ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
 });
 
+const feedbackLogger = (message) => {
+    winstonLogger.log({
+        level: 'info',
+        message: JSON.stringify(message)
+    });
+};
+
 module.exports = {
     logger,
-    errorLogger
+    errorLogger,
+    feedbackLogger
 };

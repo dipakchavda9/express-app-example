@@ -12,7 +12,7 @@ const logger = require('./app/logger');
 const routes = require('./app/routes');
 const schemas = require('./app/schemas');
 const middlewares = require('./app/middlewares');
-const db = require('./app/db');
+// const db = require('./app/db');
 
 let app = express();
 let PORT = process.env.PORT | 3000;
@@ -36,7 +36,7 @@ app.use(addRequestId);
 
 app.use(logger.logger);
 
-app.use(middlewares.db(db));
+// app.use(middlewares.db(db));
 
 app.get('/heads', routes.getHead.getAllHeads);
 app.get('/heads/:id', checkSchema(schemas.getDeleteHead), routes.getHead.getHeadById);
@@ -81,6 +81,8 @@ app.get('/reports/dashboard', routes.getReportDashboard);
 
 app.get('/reports/credit-transactions', checkSchema(schemas.getCreditTrns), routes.getCreditTrns);
 app.get('/reports/rojmel', checkSchema(schemas.getRojmel), routes.getRojmel);
+
+app.post('/feedbacks', checkSchema(schemas.postFeedback), routes.postFeedback);
 
 app.use(logger.errorLogger);
 
